@@ -1,12 +1,12 @@
 package com.mycompany.trabalho_poo.panels.cadastro;
 
+import com.mycompany.trabalho_poo.SistemaFinanceiro_POO;
 import com.mycompany.trabalho_poo.dto.usuario.Usuario;
 import com.mycompany.trabalho_poo.panels.login.LoginPanel;
 
 import javax.swing.*;
 import java.awt.*;
 
-import static com.mycompany.trabalho_poo.SistemaFinanceiro_POO.usuariosCadastrados;
 import static com.mycompany.trabalho_poo.utils.SwingUtils.abrirNovoFrame;
 
 public class CadastrarPanel extends JPanel {
@@ -76,15 +76,16 @@ public class CadastrarPanel extends JPanel {
             return;
         }
 
-        for (Usuario usuario : usuariosCadastrados) {
-            if (usuario.getLogin().equals(login)) {
-                JOptionPane.showMessageDialog(this, "Usuário já existe!", "Erro", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
+        // Check if user already exists
+        Usuario existingUsuario = SistemaFinanceiro_POO.findUsuarioByLogin(login);
+        if (existingUsuario != null) {
+            JOptionPane.showMessageDialog(this, "Usuário já existe!", "Erro", JOptionPane.ERROR_MESSAGE);
+            return;
         }
 
+        // Create and save new user
         Usuario novoUsuario = new Usuario(login, nome, senha);
-        usuariosCadastrados.add(novoUsuario);
+        SistemaFinanceiro_POO.saveUsuario(novoUsuario);
 
         JOptionPane.showMessageDialog(this, "Cadastro realizado!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
 

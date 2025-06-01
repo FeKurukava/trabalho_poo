@@ -8,20 +8,87 @@ import com.mycompany.trabalho_poo.utils.PreCadastroUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 
+@Entity
+@Table(name = "usuarios")
 public class Usuario {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false, unique = true)
     private String login;
+
+    @Column(nullable = false)
     private String nome;
+
+    @Column(nullable = false)
     private String senha;
-    private List<Transacao> transacao;
-    private List<Categoria> categoria;
+
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Transacao> transacao = new ArrayList<>();
+
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+        name = "usuario_categoria",
+        joinColumns = @JoinColumn(name = "usuario_id"),
+        inverseJoinColumns = @JoinColumn(name = "categoria_id")
+    )
+    private List<Categoria> categoria = new ArrayList<>();
+
+    @Transient
+    private boolean categoriasInitialized = false;
+
+    // Default constructor required by JPA
+    public Usuario() {
+    }
 
     public Usuario(String login, String nome, String senha) {
         this.login = login;
         this.nome = nome;
         this.senha = senha;
-        this.transacao = new ArrayList<>();
-        this.categoria = new ArrayList<>(PreCadastroUtils.buildCategoriasDefault());
+    }
+
+    // Helper method to initialize default categories if not already done
+    public void initializeDefaultCategories() {
+        if (!categoriasInitialized) {
+            this.categoria.addAll(PreCadastroUtils.buildCategoriasDefault());
+            categoriasInitialized = true;
+        }
+    }
+
+    // Helper method to add a transaction
+    public void addTransacao(Transacao transacao) {
+        this.transacao.add(transacao);
+        transacao.setUsuario(this);
+    }
+
+    // Helper method to remove a transaction
+    public void removeTransacao(Transacao transacao) {
+        this.transacao.remove(transacao);
+        transacao.setUsuario(null);
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getNome() {

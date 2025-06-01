@@ -1,5 +1,6 @@
 package com.mycompany.trabalho_poo.panels.lancamentos;
 
+import com.mycompany.trabalho_poo.SistemaFinanceiro_POO;
 import com.mycompany.trabalho_poo.dto.usuario.*;
 import com.mycompany.trabalho_poo.panels.financeiro.SistemaFinanceiroPanel;
 import com.mycompany.trabalho_poo.utils.SwingUtils;
@@ -109,7 +110,7 @@ public class LancamentosPanel extends JPanel {
             }
 
             Transacao novaTransacao = new Transacao(valor, categoria, tipo, dataCadastro, descricao);
-            usuarioLogado.getTransacao().add(novaTransacao);
+            SistemaFinanceiro_POO.saveTransacao(novaTransacao, usuarioLogado);
             JOptionPane.showMessageDialog(this, "Transação cadastrada com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
             SwingUtilities.getWindowAncestor(this).dispose();
             SwingUtils.abrirNovoFrame("Sistema Financeiro", new SistemaFinanceiroPanel());

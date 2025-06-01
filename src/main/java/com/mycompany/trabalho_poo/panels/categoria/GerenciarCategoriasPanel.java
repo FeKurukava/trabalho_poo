@@ -1,5 +1,6 @@
 package com.mycompany.trabalho_poo.panels.categoria;
 
+import com.mycompany.trabalho_poo.SistemaFinanceiro_POO;
 import com.mycompany.trabalho_poo.dto.usuario.Categoria;
 import com.mycompany.trabalho_poo.dto.usuario.Transacao;
 import com.mycompany.trabalho_poo.panels.financeiro.SistemaFinanceiroPanel;

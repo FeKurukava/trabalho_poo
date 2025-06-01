@@ -1,5 +1,6 @@
 package com.mycompany.trabalho_poo.panels.login;
 
+import com.mycompany.trabalho_poo.SistemaFinanceiro_POO;
 import com.mycompany.trabalho_poo.dto.usuario.Usuario;
 import com.mycompany.trabalho_poo.panels.financeiro.SistemaFinanceiroPanel;
 import com.mycompany.trabalho_poo.panels.cadastro.CadastrarPanel;
@@ -10,9 +11,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-
 import static com.mycompany.trabalho_poo.SistemaFinanceiro_POO.usuarioLogado;
-import static com.mycompany.trabalho_poo.SistemaFinanceiro_POO.usuariosCadastrados;
 
 public class LoginPanel extends JPanel {
 
@@ -78,17 +77,16 @@ public class LoginPanel extends JPanel {
         String user = loginField.getText();
         String pass = new String(senhaField.getPassword());
 
-        for (Usuario usuario : usuariosCadastrados) {
-            if (usuario.getLogin().equals(user) && usuario.getSenha().equals(pass)) {
-                usuarioLogado = usuario;
-                JOptionPane.showMessageDialog(this, "Login bem-sucedido!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
-                SwingUtilities.getWindowAncestor(this).dispose();
-                SwingUtils.abrirNovoFrame("Sistema Financeiro", new SistemaFinanceiroPanel());
-                return;
-            }
-        }
+        Usuario usuario = SistemaFinanceiro_POO.authenticateUsuario(user, pass);
 
-        JOptionPane.showMessageDialog(this, "Usuário ou senha incorretos!", "Erro", JOptionPane.ERROR_MESSAGE);
+        if (usuario != null) {
+            usuarioLogado = usuario;
+            JOptionPane.showMessageDialog(this, "Login bem-sucedido!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+            SwingUtilities.getWindowAncestor(this).dispose();
+            SwingUtils.abrirNovoFrame("Sistema Financeiro", new SistemaFinanceiroPanel());
+        } else {
+            JOptionPane.showMessageDialog(this, "Usuário ou senha incorretos!", "Erro", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private void abrirCadastrarPanel() {
