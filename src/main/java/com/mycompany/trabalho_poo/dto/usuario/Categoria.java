@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.mycompany.trabalho_poo.dto.usuario;
 
 import javax.persistence.Column;
@@ -22,7 +18,6 @@ public class Categoria {
     @Column(nullable = false)
     private String nome;
 
-    // Default constructor required by JPA
     public Categoria() {
     }
 

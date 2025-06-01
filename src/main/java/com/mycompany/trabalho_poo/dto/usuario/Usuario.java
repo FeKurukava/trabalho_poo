@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.mycompany.trabalho_poo.dto.usuario;
 
 import com.mycompany.trabalho_poo.utils.PreCadastroUtils;
@@ -53,7 +49,6 @@ public class Usuario {
     @Transient
     private boolean categoriasInitialized = false;
 
-    // Default constructor required by JPA
     public Usuario() {
     }
 
@@ -63,7 +58,6 @@ public class Usuario {
         this.senha = senha;
     }
 
-    // Helper method to initialize default categories if not already done
     public void initializeDefaultCategories() {
         if (!categoriasInitialized) {
             this.categoria.addAll(PreCadastroUtils.buildCategoriasDefault());
@@ -71,13 +65,11 @@ public class Usuario {
         }
     }
 
-    // Helper method to add a transaction
     public void addTransacao(Transacao transacao) {
         this.transacao.add(transacao);
         transacao.setUsuario(this);
     }
 
-    // Helper method to remove a transaction
     public void removeTransacao(Transacao transacao) {
         this.transacao.remove(transacao);
         transacao.setUsuario(null);

@@ -85,9 +85,26 @@ public class GerenciarCategoriasPanel extends JPanel {
             return;
         }
 
-        categorias.add(new Categoria(nome));
-        carregarCategorias();
-        nomeCategoriaField.setText("");
+        try {
+            // Create a new category
+            Categoria novaCategoria = new Categoria(nome);
+
+            // Save the category to the database and get the managed entity back
+            Categoria savedCategoria = SistemaFinanceiro_POO.saveCategoria(novaCategoria, usuarioLogado);
+
+            // Make sure we're using the managed entity with the correct ID
+            if (savedCategoria != null) {
+                // Refresh the categories list
+                carregarCategorias();
+                nomeCategoriaField.setText("");
+
+                JOptionPane.showMessageDialog(this, "Categoria adicionada com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "Erro ao adicionar categoria: categoria não foi salva corretamente", "Erro", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Erro ao adicionar categoria: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private void editarCategoria() {
@@ -110,9 +127,24 @@ public class GerenciarCategoriasPanel extends JPanel {
             return;
         }
 
-        List<Categoria> categorias = usuarioLogado.getCategoria();
-        categorias.get(selectedRow).setNome(novoNome);
-        carregarCategorias();
+        try {
+            // Get the category to update
+            List<Categoria> categorias = usuarioLogado.getCategoria();
+            Categoria categoria = categorias.get(selectedRow);
+
+            // Update the category name
+            categoria.setNome(novoNome);
+
+            // Save the changes to the database
+            SistemaFinanceiro_POO.updateCategoria(categoria);
+
+            // Refresh the categories list
+            carregarCategorias();
+
+            JOptionPane.showMessageDialog(this, "Categoria atualizada com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Erro ao atualizar categoria: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private void excluirCategoria() {
@@ -129,6 +161,15 @@ public class GerenciarCategoriasPanel extends JPanel {
         }
 
         String nomeCategoria = (String) tableModel.getValueAt(selectedRow, 0);
+        Categoria categoriaParaExcluir = categorias.get(selectedRow);
+
+        // Store the ID for later reference
+        Long categoriaId = categoriaParaExcluir.getId();
+
+        if (categoriaId == null) {
+            JOptionPane.showMessageDialog(this, "Erro ao excluir categoria: categoria não possui ID válido", "Erro", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
         int confirm = JOptionPane.showConfirmDialog(
                 this,
@@ -138,10 +179,42 @@ public class GerenciarCategoriasPanel extends JPanel {
         );
 
         if (confirm == JOptionPane.YES_OPTION) {
-            usuarioLogado.getTransacao().removeIf(transacao -> transacao.getCategoria().getNome().equals(nomeCategoria));
+            try {
+                // First, delete all transactions associated with this category
+                List<Transacao> transacoesParaRemover = usuarioLogado.getTransacao().stream()
+                        .filter(transacao -> transacao.getCategoria().getId().equals(categoriaId))
+                        .collect(java.util.stream.Collectors.toList());
 
-            categorias.remove(selectedRow);
-            carregarCategorias();
+                for (Transacao transacao : transacoesParaRemover) {
+                    SistemaFinanceiro_POO.deleteTransacao(transacao);
+                    usuarioLogado.getTransacao().remove(transacao);
+                }
+
+                // Remove the category from the user's list
+                categorias.remove(selectedRow);
+
+                // Update the user in the database to remove the association in usuario_categoria table
+                // Make sure the user was updated successfully
+                if (SistemaFinanceiro_POO.updateUsuario(usuarioLogado) != null) {
+                    // Then, delete the category from the database
+                    try {
+                        SistemaFinanceiro_POO.deleteCategoria(categoriaParaExcluir);
+                    } catch (Exception e) {
+                        // If we can't delete the category, log the error but don't show it to the user
+                        // since the category has already been removed from the user's list
+                        System.err.println("Erro ao excluir categoria do banco de dados: " + e.getMessage());
+                    }
+
+                    // Refresh the categories list
+                    carregarCategorias();
+
+                    JOptionPane.showMessageDialog(this, "Categoria excluída com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(this, "Erro ao atualizar usuário no banco de dados", "Erro", JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Erro ao excluir categoria: " + e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 

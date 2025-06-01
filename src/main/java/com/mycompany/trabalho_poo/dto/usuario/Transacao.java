@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.mycompany.trabalho_poo.dto.usuario;
 
 import java.math.BigDecimal;
@@ -46,7 +42,6 @@ public class Transacao {
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
 
-    // Default constructor required by JPA
     public Transacao() {
     }
 

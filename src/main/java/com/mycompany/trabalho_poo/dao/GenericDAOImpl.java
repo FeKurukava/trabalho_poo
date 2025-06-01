@@ -9,36 +9,21 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 
-/**
- * Generic implementation of the GenericDAO interface.
- * Provides common CRUD operations for all entities.
- * 
- * @param <T> The entity type
- * @param <ID> The type of the entity's ID
- */
 public abstract class GenericDAOImpl<T, ID> implements GenericDAO<T, ID> {
-    
+
     protected static final EntityManagerFactory emf = Persistence.createEntityManagerFactory("financeiroPU");
     protected final Class<T> entityClass;
-    
-    /**
-     * Constructor that determines the entity class using reflection.
-     */
+
     @SuppressWarnings("unchecked")
     public GenericDAOImpl() {
         this.entityClass = (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass())
                 .getActualTypeArguments()[0];
     }
-    
-    /**
-     * Gets a new EntityManager from the factory.
-     * 
-     * @return A new EntityManager
-     */
+
     protected EntityManager getEntityManager() {
         return emf.createEntityManager();
     }
-    
+
     @Override
     public T save(T entity) {
         EntityManager em = getEntityManager();
@@ -56,7 +41,7 @@ public abstract class GenericDAOImpl<T, ID> implements GenericDAO<T, ID> {
             em.close();
         }
     }
-    
+
     @Override
     public T update(T entity) {
         EntityManager em = getEntityManager();
@@ -74,7 +59,7 @@ public abstract class GenericDAOImpl<T, ID> implements GenericDAO<T, ID> {
             em.close();
         }
     }
-    
+
     @Override
     public void delete(T entity) {
         EntityManager em = getEntityManager();
@@ -91,7 +76,7 @@ public abstract class GenericDAOImpl<T, ID> implements GenericDAO<T, ID> {
             em.close();
         }
     }
-    
+
     @Override
     public T findById(ID id) {
         EntityManager em = getEntityManager();
@@ -101,7 +86,7 @@ public abstract class GenericDAOImpl<T, ID> implements GenericDAO<T, ID> {
             em.close();
         }
     }
-    
+
     @Override
     public List<T> findAll() {
         EntityManager em = getEntityManager();
@@ -115,7 +100,7 @@ public abstract class GenericDAOImpl<T, ID> implements GenericDAO<T, ID> {
             em.close();
         }
     }
-    
+
     /**
      * Closes the EntityManagerFactory.
      * Should be called when the application is shutting down.
