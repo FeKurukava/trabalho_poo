@@ -6,9 +6,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 
-/**
- * Implementation of the CategoriaDAO interface.
- */
 public class CategoriaDAOImpl extends GenericDAOImpl<Categoria, Long> implements CategoriaDAO {
 
     @Override

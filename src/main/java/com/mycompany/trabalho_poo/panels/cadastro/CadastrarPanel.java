@@ -76,14 +76,12 @@ public class CadastrarPanel extends JPanel {
             return;
         }
 
-        // Check if user already exists
         Usuario existingUsuario = SistemaFinanceiro_POO.findUsuarioByLogin(login);
         if (existingUsuario != null) {
             JOptionPane.showMessageDialog(this, "Usuário já existe!", "Erro", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        // Create and save new user
         Usuario novoUsuario = new Usuario(login, nome, senha);
         SistemaFinanceiro_POO.saveUsuario(novoUsuario);
 

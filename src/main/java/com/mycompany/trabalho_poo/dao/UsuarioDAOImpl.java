@@ -6,9 +6,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 
-/**
- * Implementation of the UsuarioDAO interface.
- */
 public class UsuarioDAOImpl extends GenericDAOImpl<Usuario, Long> implements UsuarioDAO {
 
     @Override

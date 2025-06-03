@@ -12,9 +12,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-/**
- * Implementation of the TransacaoDAO interface.
- */
 public class TransacaoDAOImpl extends GenericDAOImpl<Transacao, Long> implements TransacaoDAO {
     
     @Override
