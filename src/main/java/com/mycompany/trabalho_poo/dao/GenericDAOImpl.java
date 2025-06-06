@@ -101,10 +101,6 @@ public abstract class GenericDAOImpl<T, ID> implements GenericDAO<T, ID> {
         }
     }
 
-    /**
-     * Closes the EntityManagerFactory.
-     * Should be called when the application is shutting down.
-     */
     public static void closeEntityManagerFactory() {
         if (emf != null && emf.isOpen()) {
             emf.close();
